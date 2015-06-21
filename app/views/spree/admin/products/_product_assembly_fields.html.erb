@@ -1,15 +1,34 @@
-<div class="left six columns alpha">
+<div class="col-md-2">
   <div class="field">
     <%= f.label :can_be_part, Spree.t(:can_be_part)%>
     <%= f.check_box(:can_be_part) %>
   </div>
 </div>
-<div class="right six columns omega">
+<div class="col-md-2">
   <div class="field">
     <%= f.label :individual_sale, Spree.t(:individual_sale)%>
     <%= f.check_box(:individual_sale) %>
   </div>
 </div>
+<% if @product.assembly? %>
+  <div class="col-md-2">
+     <div class="field">
+      <%= f.label :track_inventory, Spree.t(:track_inventory)%>
+      <%= f.check_box(:track_inventory) %>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="field">
+      <%= f.label :backorderable, Spree.t(:can_be_backordered)%>
+      <%= f.check_box(:backorderable) %>
+    </div>
+  </div>
+<% else %>
+  <div class="col-md-2">
+  </div>
+  <div class="col-md-2">
+  </div>
+<% end %>
 
 <% if @product.assembly? %>
   <% content_for :head do %>
@@ -17,7 +36,11 @@
       jQuery(document).ready(function(){
         $("input[id='product_on_hand']").attr('disabled',true).parent().hide();
         $("input#product_can_be_part").attr('disabled',true);
-      });
+        $("input#product_backorderable").attr('disabled', true);
+      })
     </script>
   <% end %>
 <% end %>
+
+
+

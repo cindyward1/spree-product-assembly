@@ -1,74 +1,106 @@
-<%= render :partial => 'spree/admin/shared/product_sub_menu' %>
-
 <%= render :partial => 'spree/admin/shared/product_tabs', :locals => {:current => "Parts"} %>
-<div id="product_parts">
-  <%= render :partial => "parts_table", :locals => {:parts => @parts} %>
-</div>
 
-<%= form_tag('#') do %>
-  <label><%= Spree.t(:search) %>:</label>
-  <input id="searchtext" size="25">
-  <button id="search_parts_button" class="fa fa-search button" name="button">Search</button>
+<%# Place for new variant form %>
+<div id="new_part" data-hook></div>
+
+<% if @product.assembly? && !@product.has_variants? %>
+  <div id="product_parts">
+    <%= render :partial => "parts_table", :locals => {:parts => @parts} %>
+  </div>
+<% elsif !@product.has_variants? %>
+  <tr>
+    <td colspan="5">
+      <div class="no-objects-found alert alert-info">
+        <p><%= Spree.t(:no_parts) + ". " + Spree.t(:use_search_below_to_add_one) %></p>
+      </div>
+    </td>
+  </tr>
+<% else %>
+  <tr>
+    <td colspan="5">
+      <div class="no-objects-found alert alert-info">
+        <p><%= Spree.t(:cannot_add_parts_to_product_with_variants) %></p>
+      </div>
+    </td>
+  </tr>
 <% end %>
-
 <br/>
-<div id="search_hits"></div>
-<%= javascript_tag do %>
-  /*!
-   * Spree Product Assembly
-   * https://github.com/spree/spree-product-assembly
-   *
-   */
+<br/>
+<% if !@product.has_variants? %>
+  <div class="row">
+    <fieldset>
+      <%= form_tag('#', :class => "col-md-12")  do %>
+        <div class="form-group field">
+          <%= label_tag nil, Spree.t(:search_to_add_new_parts), :class => "col-md-4" %>
+          <%= text_field_tag "searchtext", nil, :class => "form-control" %>
+        </div>
+        <%= button_tag nil, type: "button", id: "search_parts_button", :class => "btn btn-primary" do %>
+          <span class="icon icon-search"></span> Search
+        <% end %>
+      <% end %>
+    </fieldset>
+  </div>
 
-  function search_for_parts(){
-    $.ajax({
-     data: {q: $("#searchtext").val() }, 
-     dataType: 'html',
-     success: function(request){
-       jQuery('#search_hits').html(request);
-       $('#search_hits').show();
-     }, 
-     type: 'POST', 
-     url: '<%= available_admin_product_parts_url(@product) %>'
-    });    
-  }
+  <br/>
+  <div id="search_hits"></div>
 
-  $("#searchtext").keypress(function (e) {
-    if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
-      search_for_parts();
-      return false;
-    } else {
-       return true;
+  <%= javascript_tag do %>
+    /*!
+     * Spree Product Assembly
+     * https://github.com/spree/spree-product-assembly
+     *
+     */
+
+    function search_for_parts(){
+      $.ajax({
+       data: { q: $("#searchtext").val() },
+       dataType: 'html',
+       success: function(request){
+         jQuery('#search_hits').html(request);
+         $('#search_hits').show();
+       },
+       type: 'POST',
+       url: '<%= available_admin_product_parts_url(@product) %>'
+      });
     }
-  });
 
-  $("#search_parts_button").click(function(e) {
-    e.preventDefault();
-    search_for_parts();
-  });
-
-  function subscribe_product_part_links()
-  {
-    $("a.set_count_admin_product_part_link").click(function(){
-      params = { count :  $("input", $(this).parent().parent()).val() };
-      return make_post_request($(this), params);
+    $("#searchtext").keypress(function (e) {
+      if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+        search_for_parts();
+        return false;
+      } else {
+         return true;
+      }
     });
-    
-    $("a.remove_admin_product_part_link").click(function(){
-      return make_post_request($(this), {});
+
+    $("#search_parts_button").click(function(e) {
+      e.preventDefault();
+      search_for_parts();
     });
-  }
 
-  function make_post_request(link, post_params)
-  {
-    spinner = $("img.spinner", link.parent())
-    spinner.show();
-    $.post(link.attr("href"), post_params,
-      function (data, textStatus) { spinner.hide(); },
-      "script");
+    function subscribe_product_part_links()
+    {
+      $("a.set_count_admin_product_part_link").click(function(){
+        params = { count :  $("input", $(this).parent().parent()).val() };
+        return make_post_request($(this), params);
+      });
+      
+      $("a.remove_admin_product_part_link").click(function(){
+        return make_post_request($(this), {});
+      });
+    }
 
-    return false;
-  }
+    function make_post_request(link, post_params)
+    {
+      spinner = $("img.spinner", link.parent())
+      spinner.show();
+      $.post(link.attr("href"), post_params,
+        function (data, textStatus) { spinner.hide(); },
+        "script");
 
-  subscribe_product_part_links();
-<% end -%>
+      return false;
+    }
+
+    subscribe_product_part_links();
+  <% end -%>
+<% end %>

@@ -7,14 +7,20 @@
 </script>
 
 <h4><%= Spree.t(:available_parts) %></h4>
-<table class="index">
+<table class="table index">
+  <colgroup>
+    <col style="width: 20%;" />
+    <col style="width: 61%;" />
+    <col style="width: 11%;" />
+    <col style="width: 8%;" />
+  </colgroup>
 	<thead>
 		<tr>
-  		<th><%= Spree.t(:name) %></th>
-  		<th><%= Spree.t(:options) %></th>
-  		<th><%= Spree.t(:qty) %></th>
-  		<th></th>
-		</tr>
+        <th><%= Spree.t(:name) %></th>
+        <th><%= Spree.t(:sku_options_price) %></th>
+        <th><%= Spree.t(:qty) %></th>
+        <th class="actions"></th>
+      </tr>
 	</thead>
 	<tbody>
     <% @available_products.each do |product| %>
@@ -24,18 +30,19 @@
         <td>
           <% if product.has_variants? %>
             <%= select_tag "part[id]", 
-                options_for_select(product.variants.map { |v| [variant_options(v), v.id] }) %>
+                options_for_select(product.variants.map { |v| [v.sku_and_options_text(true, true), v.id] }) %>
           <% else %>
             <%= hidden_field_tag "part[id]", product.master.id %>
             <%= Spree.t(:no_variants) %>
           <% end %>
         </td>
-        <td><%= text_field_tag "part[count]", 1 %></td>
+        <td><%= number_field_tag "part[count]", 1, :class => "form-control" %></td>
 		    <td class="actions">
-          <%= image_tag "spinner.gif", :style => "display:none", :class => "spinner" %>
-		      <%= link_to(icon('add') + ' ' + Spree.t(:select), 
-		                  admin_product_parts_path(@product),
-		                  :class => "add_product_part_link") %>
+          <%= link_to admin_product_parts_path(@product),
+            :class => "add_product_part_link btn btn-default btn-sm icon-link
+              action-save with-tip", title: "Add", method: :post do %>
+		        <span class="icon icon-add"></span> Add
+          <% end %>
 		    </td>           
       </tr>
     <% end %>

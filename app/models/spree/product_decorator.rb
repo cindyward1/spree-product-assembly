@@ -1,4 +1,6 @@
 Spree::Product.class_eval do
+  delegate_belongs_to :master, :track_inventory, :backorderable
+
   has_and_belongs_to_many  :parts, :class_name => "Spree::Variant",
         :join_table => "spree_assemblies_parts",
         :foreign_key => "assembly_id", :association_foreign_key => "part_id"
@@ -49,7 +51,36 @@ Spree::Product.class_eval do
     errors.add(:can_be_part, Spree.t(:assembly_cannot_be_part)) if can_be_part
   end
 
+  def any_variants_not_track_inventory?
+    if variants_including_master.loaded?
+      variants_including_master.any? { |v| !v.should_track_inventory? }
+    else
+      !Spree::Config.track_inventory_levels || !self.assembly? &&
+        variants_including_master.where(track_inventory: false).any? ||
+        self.assembly? && variants.where(track_inventory: false).any?
+    end
+  end
+
+  def total_on_hand
+    if any_variants_not_track_inventory?
+      return Float::INFINITY
+    elsif self.assembly?
+      lowest_value = Float::INFINITY
+      self.parts.each do |part|
+        if part.should_track_inventory?
+          lowest_value =
+            part.stock_items.sum(:count_on_hand)/self.count_of(part) < lowest_value ?
+            part.stock_items.sum(:count_on_hand)/self.count_of(part) : lowest_value
+        end
+      end
+      return lowest_value
+    else
+      return stock_items.sum(:count_on_hand)
+    end
+  end
+
   private
+
   def assemblies_part(variant)
     Spree::AssembliesPart.get(self.id, variant.id)
   end

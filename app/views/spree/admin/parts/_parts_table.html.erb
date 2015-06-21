@@ -1,34 +1,58 @@
-<table class="index">
-  <thead>
-  	<tr>
-  	  <th><%= Spree.t(:sku) %></th>
-  		<th><%= Spree.t(:name) %></th>
-  		<th><%= Spree.t(:options) %></th>
-  		<th><%= Spree.t(:qty) %></th>
-  	</tr>
-  </thead>
-  <tbody>
-    <% parts.each do |part| %>
-      <tr id="<%= dom_id(part, :sel)%>">
-        <td><%= part.sku %></td>
+<table class="table sortable" data-sortable-link="<%= update_positions_admin_product_variants_path(@product) %>">
+    <colgroup>
+      <col style="width: 2%;" />
+      <col style="width: 21%;" />
+      <col style="width: 30%;" />
+      <col style="width: 7%;" />
+      <col style="width: 23%;" />
+      <col style="width: 9%;" />
+      <col style="width: 12%;" />
+    </colgroup>
+    <thead data-hook="parts_header">
+      <tr>
+        <th></th>
+        <th><%= Spree.t(:name) %></th>
+        <th><%= Spree.t(:options) %></th>
+        <th class="text-center"><%= Spree.t(:price) %></th>
+        <th class="text-center"><%= Spree.t(:sku) %></th>
+        <th><%= Spree.t(:qty) %></th>
+        <th class="actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+    <% @parts.each do |part| %>
+      <% variant = part %>
+      <tr id="<%= spree_dom_id part %>" <%= 'style="color:red;"' if part.deleted? %> data-hook="parts_row">
+        <td class="move-handle">
+          <% if can? :edit, variant %>
+            <span class="icon icon-move handle"></span>
+          <% end %>
+        </td>
         <td><%= part.product.name %></td>
-        <td><%= variant_options part %></td>
-        <td><%= text_field_tag :count, @product.count_of(part) %></td>
-  	    <td class="actions">
-          <%= image_tag "spinner.gif", :style => "display:none", :class => "spinner" %>
-          <%= link_to(icon('edit'),
-                      set_count_admin_product_part_url(@product, part),
-                      :class => "set_count_admin_product_part_link save-line-item fa fa-ok no-text") %>
-
-          <%= link_to(icon('delete'), 
-                      remove_admin_product_part_url(@product, part),
-                      :class => "remove_admin_product_part_link delete-line-item fa fa-trash no-text") %>             
-  	    </td>        
+        <td><%= part.options_text %></td>
+        <td class="text-right"><%= part.display_price.to_html %></td>
+        <td class="text-center"><%= part.sku %></td>
+        <td><%= number_field_tag :count, @product.count_of(part), max: "1000", :class => "form-control" %></td>
+        <td class="actions">
+          <%= hidden_field_tag :part_id, part.id, id: "params_part_id" %>
+          <%= link_to set_count_admin_product_part_url(@product, part), :class => "set_count_admin_product_part_link btn btn-success btn-sm icon-link action-update with-tip no-text", title: "Update", method: :post, remote: true do %>
+            <span class="icon icon-refresh"></span>
+          <% end %>
+          <%= link_to remove_admin_product_part_url(@product, part), :class => "remove_admin_product_part_link btn btn-danger btn-sm icon-link action-remove with-tip no-text", title: "Remove", method: :post, remote: true, data: { confirm: "Are you sure?" } do %>
+            <span class="icon icon-remove" %></span>
+          <% end %>
+        </td>
       </tr>
     <% end %>
-    <% if parts.empty? %>
-     <tr><td colspan="5"><%= Spree.t(:none) %>.</td></tr>
-    <% end %>
-  </tbody>
-</table>
+    <% if @parts.empty? %>
+        <tr>
+          <td colspan="5">
+            <div class="no-objects-found alert alert-info">
+              <p><%= Spree.t(:no_parts) + ". " + Spree.t(:use_search_below_to_add_one) %></p>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 <%= javascript_tag("subscribe_product_part_links();") if request.xhr? %>

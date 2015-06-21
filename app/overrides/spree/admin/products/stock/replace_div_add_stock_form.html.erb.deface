@@ -1,0 +1,7 @@
+<!-- replace 'div#add_stock_form' -->
+  
+    <% if !@product.assembly? || @product.master.track_inventory? %>
+      <div id="add_stock_form" class="panel panel-default">
+        <%= render 'add_stock_form' %>
+      </div>
+    <% end %>

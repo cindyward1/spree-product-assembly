@@ -1,12 +1,24 @@
 ---
 en:
   spree:
+    assembly_cannot_be_part: assembly can't be part
     available_parts: Available parts
+    cannot_add_parts_to_product_with_variants: Can't add parts to a product with variants
     can_be_part: Can be part
     individual_sale: Individual sale
+    info_number_of_parts_not_shown:
+      one: and one more
+      other: 'and %{count} others'
+    info_product_has_multiple_parts: 'This product has %{count} part(s):'
+    manage_parts: Manage Parts
+    no_parts: No parts found
     no_variants: No variants
+    part: Part
     parts: Parts
-    assembly_cannot_be_part: assembly can't be part
     product_bundles: Product Bundles
+    product_not_an_assembly: This product is not an assembly
     parts_included: Parts included
     part_of_bundle: 'Part of bundle %{sku}'
+    search_to_add_new_parts: Search to add new parts
+    total_on_hand: Total on hand
+    use_search_below_to_add_one: Use search below to add one!

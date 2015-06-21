@@ -1,12 +1,19 @@
 ---
 sv:
   spree:
+    assembly_cannot_be_part: montering kan inte vara en del
     available_parts: Tillgängliga delar
     can_be_part: Kan vara del
     individual_sale: Individuell försäljning
+    info_number_of_parts_not_shown:
+      one: och en me
+      other: 'och % {count} andra'
+    info_product_has_multiple_parts: 'Denna produkt har %{count} del(ar) :'
+    manage_parts: Hantera delar
     no_variants: Inga varianter
+    part: Del
     parts: Delar
-    assembly_cannot_be_part: enheten kan inte vara en del
     product_bundles: Produktpaket
     parts_included: Delar som ingår
     part_of_bundle: 'Del av %{sku}'
+    total_on_hand: Totalt tillgängligt

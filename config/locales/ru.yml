@@ -1,12 +1,19 @@
 ---
 ru:
   spree:
+    assembly_cannot_be_part: сборка не может быть частью
     available_parts: Доступные составные части
     can_be_part: Может входить в состав других продуктов
     individual_sale: Может продаваться отдельно
+    info_number_of_parts_not_shown:
+      one: 'И еще один'
+      other: 'и %{count} другие'
+    info_product_has_multiple_parts: 'Этот продукт имеет %{count} частей:'
+    manage_parts: Управление Запчасти
     no_variants: Нет вариантов
-    parts: Составные части
-    assembly_cannot_be_part: сборка не может быть частью
+    part: часть
+    parts: Составные частей
     product_bundles: Продукт cвязки
     parts_included: 'Детали, входящие'
     part_of_bundle: 'Часть пучка %{sku}'
+    total_on_hand: Всего доступно

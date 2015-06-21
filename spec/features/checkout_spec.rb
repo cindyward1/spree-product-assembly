@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Checkout", type: :feature do
+describe "Checkout", type: :feature, js: true do
   let!(:country) { create(:country, :name => "United States", :states_required => true) }
   let!(:state) { create(:state, :name => "Ohio", :country => country) }
   let!(:shipping_method) { create(:shipping_method) }
@@ -25,31 +25,31 @@ describe "Checkout", type: :feature do
 
       click_button "Save and Continue"
       expect(current_path).to eql(spree.checkout_state_path("delivery"))
-      page.should have_content(variant.product.name)
+      expect(page).to have_content(variant.product.name)
 
       click_button "Save and Continue"
       expect(current_path).to eql(spree.checkout_state_path("payment"))
 
       click_button "Save and Continue"
       expect(current_path).to eql(spree.order_path(Spree::Order.last))
-      page.should have_content(variant.product.name)
+      expect(page).to have_content(variant.product.name)
     end
   end
 
   context "backend order shipments UI", js: true do
 
-    context "ordering only the product assembly" do
+    context "ordering only the product assembly", js: true do
       include_context "purchases product with part included"
 
       it "views parts bundled as well" do
         visit spree.admin_orders_path
         click_on Spree::Order.last.number
 
-        page.should have_content(variant.product.name)
+        expect(page).to have_content(variant.product.name)
       end
     end
 
-    context "ordering assembly and the part as individual sale" do
+    context "ordering assembly and the part as individual sale", js: true do
       before do
         visit spree.root_path
         click_link variant.product.name
@@ -57,7 +57,7 @@ describe "Checkout", type: :feature do
       end
       include_context "purchases product with part included"
 
-      it "views parts bundled and not" do
+      it "views parts bundled and not", js: true do
         visit spree.admin_orders_path
         click_on Spree::Order.last.number
 

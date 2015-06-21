@@ -1,0 +1,23 @@
+<!-- insert_after 'div[data-hook=admin_product_form_multiple_variants]' -->
+
+    <% elsif @product.assembly? %>
+      <div data-hook="admin_product_form_multiple_parts" class="well">
+        <div class="info marginb">
+          <%= Spree.t(:info_product_has_multiple_parts, count: @product.parts.count) %>
+          <ul class="text_list">
+            <% @product.parts.first(5).each do |part| %>
+              <li><%= part.name %></li>
+            <% end %>
+          </ul>
+          <% if @product.parts.count > 5 %>
+            <em>
+              <%= Spree.t(:info_number_of_parts_not_shown, count: @product.parts.count - 5) %>
+            </em>
+          <% end %>
+        </span>
+        <div class="info-actions">
+          <% if can?(:admin, Spree::Variant) %>
+            <%= link_to_with_icon 'wrench', Spree.t(:manage_parts), spree.admin_product_parts_url(@product), class: "btn btn-default" %>
+          <% end %>
+        </div>
+      </div>

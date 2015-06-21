@@ -1,62 +1,62 @@
 <% if order.line_items.assemblies.any? %>
-  <fieldset class="no-border-bottom">
-    <legend align="center" class="" data-hook="">
-      <%= Spree.t(:product_bundles) %>
-    </legend>
-  </fieldset>
+  <div class="panel panel-default">
+    <div class="panel-heading stock-location no-borderb" data-hook="product-bundles-header">
+      <h1 class="panel-title">
+        <span class="shipment-state"><%= Spree.t(:product_bundles) %></span>
+      </h1>
+    </div>
+    <table class="table table-bordered product-bundles" data-hook="">
+      <thead>
+        <th colspan="2"><%= Spree.t(:item_description) %></th>
+        <th class="text-center"><%= Spree.t(:price) %></th>
+        <th class="text-center"><%= Spree.t(:quantity) %></th>
+        <th class="text-center"><%= Spree.t(:total) %></th>
+        <th class="orders-actions actions text-center" data-hook="admin_order_form_line_items_header_actions"></th>
+      </thead>
 
-  <table class="product-bundles" data-hook="">
-    <colgroup>
-      <col style="width: 10%;" />
-      <col style="width: 30%;" />
-      <col style="width: 15%;" />
-      <col style="width: 15%;" />
-      <col style="width: 15%;" />
-      <col style="width: 15%;" />
-    </colgroup>
+      <% order.line_items.assemblies.each do |item| %>
+        <tbody>
+          <tr class="" data-item-quantity="<%= item.quantity %>">
+            <td class="item-image"><%= mini_image(item.variant) %></td>
+            <td class="item-name">
+              <%= item.product.name %> - <%= item.variant.sku %> <br />
+              <%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
+            </td>
+            <td class="item-price text-center">
+              <%= item.single_money.to_html %>
+            </td>
+            <td class="line-item-qty-show text-center">
+              <%= item.quantity %>
+            </td>
 
-    <thead>
-      <th colspan="2"><%= Spree.t(:item_description) %></th>
-      <th><%= Spree.t(:price) %></th>
-      <th><%= Spree.t(:quantity) %></th>
-      <th><%= Spree.t(:total) %></th>
-      <th class="orders-actions actions" data-hook="admin_order_form_line_items_header_actions"></th>
-    </thead>
+            <td class="line-item-qty-edit is-hidden">
+              <%= number_field_tag :quantity_bundle, item.quantity, :min => 0, class: "line_item_quantity form-control" %>
+            </td>
 
-    <% order.line_items.assemblies.each do |item| %>
-      <tbody>
-        <tr class="" data-item-quantity="<%= item.quantity %>">
-          <td class="item-image"><%= mini_image(item.variant) %></td>
-          <td class="item-name">
-            <%= item.product.name %> - <%= item.variant.sku %> <br />
-            <%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
-          </td>
-          <td class="item-price align-center">
-            <%= item.single_money.to_html %>
-          </td>
-          <td class="line-item-qty-show align-center">
-            <%= item.quantity %>
-          </td>
-
-          <td class="line-item-qty-edit hidden">
-            <%= number_field_tag :quantity, item.quantity, :min => 0, class: "line_item_quantity", :size => 5 %>
-          </td>
-
-          <td class="item-total align-center">
-            <%= item.display_amount.to_html %>
-          </td>
-          <td class="cart-item-delete actions" data-hook="cart_item_delete">
-            <% unless item.any_units_shipped? %>
-              <% if can? :update, item %>
-              <%= link_to '', '#', :class => 'save-line-item fa fa-ok no-text with-tip', :data => { 'line-item-id' => item.id, :action => 'save'}, :title => Spree.t('actions.save'), :style => 'display: none' %>
-              <%= link_to '', '#', :class => 'cancel-line-item fa fa-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel'), :style => 'display: none' %>
-              <%= link_to '', '#', :class => 'edit-line-item fa fa-edit no-text with-tip', :data => {:action => 'edit'}, :title => Spree.t('edit') %>
-              <%= link_to '', '#', :class => 'delete-line-item fa fa-trash no-text with-tip', :data => { 'line-item-id' => item.id, :action => 'remove'}, :title => Spree.t('delete') %>
+            <td class="item-total text-center">
+              <%= item.display_amount.to_html %>
+            </td>
+            <td class="cart-item-delete actions text-center" data-hook="cart_item_delete">
+              <% unless item.any_units_shipped? %>
+                <% if can? :update, item %>
+                  <%= link_to '#', :class => 'cancel-line-item btn btn-default btn-sm no-text with-tip', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel'), :style => 'display: none' do %>
+                    <span class="icon icon-arrow-left"></span>
+                  <% end %>
+                  <%= link_to '#', :class => 'save-line-item btn btn-success btn-sm no-text with-tip', :data => { 'line-item-id' => item.id, :action => 'save'}, :title => Spree.t('actions.save'), :style => 'display: none' do %>
+                    <span class="icon icon-save"></span>
+                  <% end %>
+                  <%= link_to '#', :class => 'edit-line-item btn btn-primary btn-sm no-text with-tip', :data => {:action => 'edit'}, :title => Spree.t('edit') do %>
+                    <span class="icon icon-edit"></span>
+                  <% end %>
+                  <%= link_to '#', :class => 'delete-line-item btn btn-danger btn-sm no-text with-tip', :data => { 'line-item-id' => item.id, :action => 'remove'}, :title => Spree.t('delete') do %>
+                    <span class="icon icon-remove"></span>
+                  <% end %>
+                <% end %>
               <% end %>
-            <% end %>
-          </td>
-        </tr>
-      </tbody>
-    <% end %>
-  </table>
+            </td>
+          </tr>
+        </tbody>
+      <% end %>
+    </table>
+  </div>
 <% end %>
